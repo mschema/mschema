@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <script src="../build/build.js"></script>
+  </head>
+  <body>
+    <h1>example</h1>
+    <textarea cols="80" rows="10" id="result"></textarea>
+    <hr/>
+    <textarea cols="80" rows="30" id="result2"></textarea>
+    
+
+    
+    <script type="text/javascript">
+      var mschema = require('mschema');
+
+      var userSchema = {
+        "name": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 20,
+          "required": true
+        },
+        "password": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 64
+        },
+        "email": "string"
+      }
+
+      var user = {
+        "name": "Marak",
+        "password": "atleasteight",
+        "email": "foo@bar.com"
+      }
+
+      // validates true
+      var result = mschema.validate(user, userSchema);
+      alert('successfully performed validation!');
+      document.getElementById('result').innerHTML = JSON.stringify(result, true, 2);
+
+      var invalidUser = {
+        "name": "M",
+        "password": "1234",
+        "email": "foo@bar.com"
+      }
+
+      // validates false with errors
+      var result = mschema.validate(invalidUser, userSchema); 
+      document.getElementById('result2').innerHTML = JSON.stringify(result, true, 2);
+
+    </script>
+    
+    
+  </body>
+</html>

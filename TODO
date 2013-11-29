@@ -1,0 +1,3 @@
+- Add custom messages for validation errors
+- Add conform constraint ( js validation methods )
+- result.instance data should be a clone and not affect original data argument

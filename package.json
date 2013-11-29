@@ -1,0 +1,27 @@
+{
+  "name": "mschema",
+  "version": "0.5.0",
+  "keywords": ["schema", "mschema", "validator", "json", "json-schema"],
+  "description": "A schema language for defining the structure of JSON data",
+  "repository": {
+   "type": "git",
+   "url": "http://github.com/mschema/mschema.git"
+  },
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "test": "tap test/"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tap": "~0.4.4"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": "",
+  "author": "Marak Squires <support@marak.com>",
+  "license": "MIT",
+  "gitHead": "97f335723c70d5d99462fe608ddc8f03a2c6947a",
+  "readmeFilename": "README.md"
+}

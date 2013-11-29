@@ -1,0 +1,14 @@
+{
+  "name": "mschema",
+  "repo": "mschema/mschema",
+  "description": "A schema language for defining the structure of JSON data",
+  "version": "0.5.0",
+  "keywords": ["schema", "mschema", "validator", "json", "json-schema"],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js"
+  ]
+}
