@@ -217,10 +217,15 @@ mschema.types = {
   }
 };
 
-var validate = mschema.validate = function (data, _schema) {
+var validate = mschema.validate = function (data, _schema, options) {
 
   var result = { valid: true, instance: {} },
-      errors = [];
+      errors = [],
+      options = options || {};
+
+  if (typeof options.strict === "undefined") {
+    options.strict = true;
+  }
 
   if (typeof _schema !== 'object') {
     return 'schema contains no properties, cannot validate';
@@ -253,8 +258,21 @@ var validate = mschema.validate = function (data, _schema) {
           data[propertyName] = value;
         }
 
+        if (options.strict === false) {
+          var _value;
+          // determine if any incoming data might need to be changed from a string number into a Number type
+          if (typeof value === "string" && (property === "number" || property.type === "number")) {
+            _value = parseInt(data[propertyName], 10);
+            if (_value.toString() !== "NaN") {
+              // a non NaN number was parsed, assign it as validation value and to instance value
+              value = _value;
+              data[propertyName] = value;
+            }
+          }
+        }
+
         // check if it's value is required but undefined in value
-        if (property.required && (value === undefined || value.length === 0)) {
+        if (property.required && (value === null || value === undefined || value.length === 0)) {
           errors.push({
             property: propertyName,
             constraint: 'required',
