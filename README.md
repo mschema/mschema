@@ -200,7 +200,7 @@ var validate = mschema.validate(data, user);
 
 JSON-Schema was designed to the specifications of [XML-Schema](http://en.wikipedia.org/wiki/XML_schema), which was designed to express [Document Type Definitions](http://en.wikipedia.org/wiki/Document_Type_Definition).
 
-Simply put: JSON-Schema has a lot of functionality that most developers don't need or want. The complexity of JSON-Schema makes it hard to use.
+Simply put: JSON-Schema has a lot of functionality that most developers don't need or want. The complexity of JSON-Schema makes it difficult to use and hard to build tools for.
 
 ### Key differences between mschema and JSON-Schema
 
