@@ -12,6 +12,9 @@ mschema.types = {
   },
   "object": function (val) {
     return typeof val === "object";
+  },
+  "any": function (val) {
+    return true;
   }
 };
 
@@ -42,7 +45,7 @@ var validate = mschema.validate = function (data, _schema, options) {
 
       function parseConstraint (property, value) {
 
-        if (typeof property === "string" && (property === 'string' || property === 'number' || property === 'object' || property === 'array' || property === 'boolean')) {
+        if (typeof property === "string" && (property === 'string' || property === 'number' || property === 'object' || property === 'array' || property === 'boolean' || property === 'any')) {
           property = {
             "type": property,
             "required": false

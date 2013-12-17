@@ -15,7 +15,8 @@ test("mschema.validate - valid data - constrained property - type - object liter
     "name": { "type": "string" },
     "age": { "type": "number" },
     "address": { "type": "object" },
-    "isActive": { "type": "boolean" }
+    "isActive": { "type": "boolean" },
+    "meta": { "type": "any" }
   };
 
   // define data to validate
@@ -27,7 +28,8 @@ test("mschema.validate - valid data - constrained property - type - object liter
       "city": "Canada",
       "zipcode": "12345-01"
     },
-    "isActive": true
+    "isActive": true,
+    "meta": 42
   };
 
   var result = mschema.validate(data, user);
