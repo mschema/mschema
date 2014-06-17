@@ -18,7 +18,7 @@ mschema.types = {
   }
 };
 
-var validate = mschema.validate = function (data, _schema, options) {
+var validate = mschema.validate = function (_data, _schema, options) {
 
   var result = { valid: true, instance: {} },
       errors = [],
@@ -248,9 +248,18 @@ var validate = mschema.validate = function (data, _schema, options) {
 
   }
 
-  _parse(data, _schema);
 
-  result.instance = data;
+  // create a clone of the schema so the original schema passed is not modifed by _parse()
+  var schemaCopy = {};
+  schemaCopy = clone(_schema);
+  _parse(_data, schemaCopy);
+
+  // TODO: clone data to fix immutable data issue
+  // see: /test/immutable-data.js
+  //  var dataCopy = clone(_data);
+  // _parse(dataCopy, schemaCopy);
+
+  result.instance = _data;
 
   if (errors.length > 0) {
     result.valid = false;
@@ -349,5 +358,23 @@ var checkConstraint = mschema.checkConstraint = function (property, constraint, 
   }
 
 };
+
+function clone (obj, copy) {
+  if (obj == null || typeof obj != "object") {
+    return obj;
+  }
+  if (obj.constructor != Object && obj.constructor != Array) {
+    return obj;
+  }
+  if (obj.constructor == Date || obj.constructor == RegExp || obj.constructor == Function ||
+      obj.constructor == String || obj.constructor == Number || obj.constructor == Boolean) {
+    return new obj.constructor(obj);
+  }
+  copy = copy || new obj.constructor();
+  for (var name in obj) {
+    copy[name] = typeof copy[name] == "undefined" ? clone(obj[name], null) : copy[name];
+  }
+  return copy;
+}
 
 module['exports'] = mschema;
