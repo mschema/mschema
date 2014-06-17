@@ -214,10 +214,13 @@ mschema.types = {
   },
   "object": function (val) {
     return typeof val === "object";
+  },
+  "any": function (val) {
+    return true;
   }
 };
 
-var validate = mschema.validate = function (data, _schema, options) {
+var validate = mschema.validate = function (_data, _schema, options) {
 
   var result = { valid: true, instance: {} },
       errors = [],
@@ -244,7 +247,7 @@ var validate = mschema.validate = function (data, _schema, options) {
 
       function parseConstraint (property, value) {
 
-        if (typeof property === "string" && (property === 'string' || property === 'number' || property === 'object' || property === 'array' || property === 'boolean')) {
+        if (typeof property === "string" && (property === 'string' || property === 'number' || property === 'object' || property === 'array' || property === 'boolean' || property === 'any')) {
           property = {
             "type": property,
             "required": false
@@ -447,9 +450,28 @@ var validate = mschema.validate = function (data, _schema, options) {
 
   }
 
-  _parse(data, _schema);
 
-  result.instance = data;
+  // create a clone of the schema so the original schema passed is not modifed by _parse()
+  var schemaCopy = {};
+  schemaCopy = clone(_schema);
+
+  // if the incoming data is not an object, create a single key object to represent it
+  if (typeof _data !== "object") {
+    _data = {
+      key: _data
+    };
+    schemaCopy = {
+      key: schemaCopy
+    }
+  }
+  _parse(_data, schemaCopy);
+
+  // TODO: clone data to fix immutable data issue
+  // see: /test/immutable-data.js
+  //  var dataCopy = clone(_data);
+  // _parse(dataCopy, schemaCopy);
+
+  result.instance = _data;
 
   if (errors.length > 0) {
     result.valid = false;
@@ -548,6 +570,24 @@ var checkConstraint = mschema.checkConstraint = function (property, constraint, 
   }
 
 };
+
+function clone (obj, copy) {
+  if (obj == null || typeof obj != "object") {
+    return obj;
+  }
+  if (obj.constructor != Object && obj.constructor != Array) {
+    return obj;
+  }
+  if (obj.constructor == Date || obj.constructor == RegExp || obj.constructor == Function ||
+      obj.constructor == String || obj.constructor == Number || obj.constructor == Boolean) {
+    return new obj.constructor(obj);
+  }
+  copy = copy || new obj.constructor();
+  for (var name in obj) {
+    copy[name] = typeof copy[name] == "undefined" ? clone(obj[name], null) : copy[name];
+  }
+  return copy;
+}
 
 module['exports'] = mschema;
 });
