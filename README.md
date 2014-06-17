@@ -1,5 +1,7 @@
 # mschema
 
+<img src="https://travis-ci.org/mschema/mschema.svg?branch=master"/>
+
 A concise schema language for describing the structure of JSON data
 
 ## Features
