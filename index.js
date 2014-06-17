@@ -252,6 +252,16 @@ var validate = mschema.validate = function (_data, _schema, options) {
   // create a clone of the schema so the original schema passed is not modifed by _parse()
   var schemaCopy = {};
   schemaCopy = clone(_schema);
+
+  // if the incoming data is not an object, create a single key object to represent it
+  if (typeof _data !== "object") {
+    _data = {
+      key: _data
+    };
+    schemaCopy = {
+      key: schemaCopy
+    }
+  }
   _parse(_data, schemaCopy);
 
   // TODO: clone data to fix immutable data issue

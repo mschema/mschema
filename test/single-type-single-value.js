@@ -9,10 +9,7 @@ test("load mschema module", function (t) {
   t.end();
 });
 
-// TODO: implement validation for non-object values
-return;
-
-test("mschema.validate - valid data - constrained property - string - regex", function (t) {
+test("mschema.validate - valid data - constrained property - string - minLength", function (t) {
 
   var name = {
     "type": "string",
@@ -29,28 +26,28 @@ test("mschema.validate - valid data - constrained property - string - regex", fu
 
 });
 
+
 test("mschema.validate - invalid data - constrained property - string - regex", function (t) {
 
   var name = {
     "type": "string",
-    "minLength": 4
+    "regex": /^[\w|\-|\.]/
   };
 
-  var data = "M";
+  var data = "(!@#@!)";
 
   var result = mschema.validate(data, name);
 
   t.equal(result.valid, false);
-  t.type(result.errors, Array)  
+
+  t.type(result.errors, Array);
   t.type(result.errors, Object);
   t.equal(result.errors.length, 1);
 
-  //t.equal(result.errors[0].property, 'name');
-
-  t.equal(result.errors[0].constraint, 'minlength');
-  t.equal(result.errors[0].expected, 4);
-  t.equal(result.errors[0].actual, 1);
-  t.equal(result.errors[0].value, "M");
+  t.equal(result.errors[0].property, 'key');
+  t.equal(result.errors[0].constraint, 'regex');
+  t.equal(result.errors[0].actual, "(!@#@!)");
+  t.equal(result.errors[0].value, "(!@#@!)");
   t.ok(result, "data is invalid");
   t.end();
 
