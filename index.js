@@ -107,8 +107,14 @@ var validate = mschema.validate = function (_data, _schema, options) {
         }
 
         if (typeof property.regex === 'object') {
-          var re = property.regex
-          var result = re.exec(value);
+          var re = property.regex,
+              result;
+
+          if (property.required === false && value.length === 0) {
+            return;
+          }
+
+          result = re.exec(value);
           if (result === null) {
             errors.push({
               property: propertyName,
@@ -248,13 +254,12 @@ var validate = mschema.validate = function (_data, _schema, options) {
 
   }
 
-
   // create a clone of the schema so the original schema passed is not modifed by _parse()
   var schemaCopy = {};
   schemaCopy = clone(_schema);
 
-  // if the incoming data is not an object, create a single key object to represent it
-  if (typeof _data !== "object") {
+  // if the incoming data is not an object or function, assume its a single value and create a single keyed object to represent it
+  if (typeof _data !== "object" && typeof _data !== 'function') {
     _data = {
       key: _data
     };
