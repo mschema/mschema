@@ -54,3 +54,23 @@ test("mschema.validate - invalid data - constrained property - string - regex", 
   t.end();
 
 });
+
+test("mschema.validate - empty value - constrained property - string - regex - required false", function (t) {
+
+  var user = {
+    "name": {
+      "type": "string",
+      "regex": /^[\w|\-|\.]+$/,
+      "required": false
+    }
+  };
+
+  var data = { "name": "" };
+
+  var result = mschema.validate(data, user);
+
+  t.equal(result.valid, true);
+  t.ok(result, "data is valid");
+  t.end();
+
+});
