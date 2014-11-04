@@ -15,6 +15,10 @@ mschema.types = {
   },
   "any": function (val) {
     return true;
+  },
+  "file": function (val) {
+    // TODO: add binary file detection
+    return true;
   }
 };
 
