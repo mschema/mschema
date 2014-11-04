@@ -1,6 +1,6 @@
 {
   "name": "mschema",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "keywords": ["schema", "mschema", "validator", "json", "json-schema"],
   "description": "A schema language for defining the structure of JSON data",
   "repository": {
