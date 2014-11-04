@@ -401,8 +401,9 @@ function clone (obj, copy) {
 }
 
 function Schema (_schema) {
-  if (!(this instanceof Schema))
+  if (!(this instanceof Schema)) {
     return new Schema(_schema);
+  }
   this._schema = _schema;
 }
 
