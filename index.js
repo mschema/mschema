@@ -18,6 +18,10 @@ mschema.types = {
   }
 };
 
+mschema.define = function (_schema) {
+  return new Schema(_schema);
+};
+
 var validate = mschema.validate = function (_data, _schema, options) {
 
   var result = { valid: true, instance: {} },
@@ -391,5 +395,15 @@ function clone (obj, copy) {
   }
   return copy;
 }
+
+function Schema (_schema) {
+  if (!(this instanceof Schema))
+    return new Schema(_schema);
+  this._schema = _schema;
+}
+
+Schema.prototype.validate = function (_data, options) {
+  return mschema.validate(_data, this._schema, options);
+};
 
 module['exports'] = mschema;
