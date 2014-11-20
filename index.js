@@ -78,6 +78,20 @@ var validate = mschema.validate = function (_data, _schema, options) {
               data[propertyName] = value;
             }
           }
+          // determine if any incoming data might need to be changed from an html checkbox into a boolean
+          if (typeof value === "string" && (property === "boolean" || property.type === "boolean")) {
+            if (value === "on") {
+              value = true;
+            }
+            if (value === "off") {
+              value = false;
+            }
+            if (typeof value === "undefined") {
+              value = false;
+            }
+            data[propertyName] = value;
+          }
+
         }
 
         // check if it's value is required but undefined in value
