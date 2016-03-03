@@ -150,8 +150,9 @@ test("mschema.validate - required property, default value - data missing", funct
   t.ok(result, "data is valid");
   t.end();
 
-
 });
+
+
 
 
 test("mschema.validate - required string property - empty string value", function (t) {
@@ -179,3 +180,23 @@ test("mschema.validate - required string property - empty string value", functio
 });
 
 
+test("mschema.validate - required property, default value - null data", function (t) {
+
+  var user = {
+    "name": {
+      "type": "string",
+      "default": "bob",
+      "required": true
+    },
+    "age": { type: 'number', required: false }
+  };
+
+  var data = { name: null };
+
+  var result = mschema.validate(data, user);
+  t.equal(result.valid, true);
+  t.equal(result.instance.name, "bob")
+  t.ok(result, "data is valid");
+  t.end();
+
+});

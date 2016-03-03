@@ -61,7 +61,7 @@ var validate = mschema.validate = function (_data, _schema, options) {
         }
 
         // if value is undefined and a default value is specified
-        if (typeof property.default !== 'undefined' && typeof value === 'undefined') {
+        if (typeof property.default !== 'undefined' && typeof value === 'undefined' || value === null) {
           // assign default value
           value = property.default;
           data[propertyName] = value;
@@ -228,7 +228,11 @@ var validate = mschema.validate = function (_data, _schema, options) {
       // { type: 'array', required: false }
       // if the property is an array, assume it has a single value of either string or object type
       if (Array.isArray(property) === true) {
-
+        /* TODO: can we remove this commented out line?
+        if (typeof value === "undefined") {
+          continue;
+        }
+        */
         // if the array has more then one element, it is most likely a syntax error in the schema definition from the user
         if (property.length > 1) {
           errors.push({
