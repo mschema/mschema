@@ -93,6 +93,24 @@ the data to be validated
 ### schema
 the schema to validate the data against
 
+# Types
+
+mschema supports the following primitive types:
+
+* `string`
+* `number`
+* `boolean`
+* `object`
+* `any`
+
+An array is defined implicitly by wrapping a primitive type with Array brackets , e.g.:
+
+```json
+{
+  "names": ["string"]
+}
+```
+
 # Usage
 
 see: `/examples` and `/test` folders for additional usage
@@ -119,6 +137,14 @@ see: `/examples` and `/test` folders for additional usage
   }
 }
 ```
+
+When performing a type assignment as an object literal the following keywords may be used as keys of the Object to better define the validation parameters:
+
+* `minLength` **Type** `Number`: The minimum length of a string value.
+* `maxLength` **Type** `Number`: The maximum length of a string value.
+* `min` **Type** `Number`: The minimum value a Number can have.
+* `max` **Type** `Number`: The maximum value a Number can have.
+* `enum` **Type** `Array` of `String`: Define a set of allowed values, i.e. `enum: ['one', 'two', 'three']`.
 
 ### Nesting Types
 
