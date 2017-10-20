@@ -19,6 +19,18 @@
   "scripts": {
     "test": "tap test/*.js"
   },
+  "nyc": {
+    "all": false,
+    "include": [
+      "index.js"
+    ],
+    "reporter": [
+      "html",
+      "lcov",
+      "clover"
+    ],
+    "report-dir": "./reports/coverage"
+  },
   "repository": "",
   "author": "Marak Squires <support@marak.com>",
   "license": "MIT",

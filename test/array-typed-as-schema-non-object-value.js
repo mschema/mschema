@@ -33,7 +33,7 @@ test("mschema.validate - valid data - constraint - array of objects", function (
   };
 
   var result = mschema.validate(data, blog);
-  console.log(result)
+
   t.equal(result.valid, false);
   t.type(result.errors, Array)
   t.type(result.errors, Object);

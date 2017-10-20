@@ -26,7 +26,7 @@ mschema.define = function (_schema) {
   return new Schema(_schema);
 };
 
-var validate = mschema.validate = function (_data, _schema, options) {
+var validate = mschema.validate = function (_data, _schema, options, cb) {
 
   var result = { valid: true, instance: {} },
       errors = [],
@@ -37,7 +37,10 @@ var validate = mschema.validate = function (_data, _schema, options) {
   }
 
   if (typeof _schema !== 'object') {
-    return 'schema contains no properties, cannot validate';
+    return {
+      valid: false,
+      message: 'schema is not an object, cannot validate'
+    }
   }
 
   function _parse (data, schema) {
@@ -53,6 +56,7 @@ var validate = mschema.validate = function (_data, _schema, options) {
 
       function parseConstraint (property, value) {
 
+        // auto-types on string values ( will turn "foo": "string" into { type: "string", required: false }), etc
         if (typeof property === "string" && (property === 'string' || property === 'number' || property === 'object' || property === 'array' || property === 'boolean' || property === 'any')) {
           property = {
             "type": property,
@@ -78,15 +82,17 @@ var validate = mschema.validate = function (_data, _schema, options) {
               data[propertyName] = value;
             }
           }
+          // undefined values for boolean should be considered false
+          if (property.type === 'boolean' && typeof value === 'undefined') {
+            value = false;
+            data[propertyName] = value;
+          }
           // determine if any incoming data might need to be changed from an html checkbox into a boolean
           if (typeof value === "string" && (property === "boolean" || property.type === "boolean")) {
             if (value === "on") {
               value = true;
             }
             if (value === "off") {
-              value = false;
-            }
-            if (typeof value === "undefined") {
               value = false;
             }
             data[propertyName] = value;
@@ -228,11 +234,10 @@ var validate = mschema.validate = function (_data, _schema, options) {
       // { type: 'array', required: false }
       // if the property is an array, assume it has a single value of either string or object type
       if (Array.isArray(property) === true) {
-        /* TODO: can we remove this commented out line?
-        if (typeof value === "undefined") {
-          continue;
+        // if we've hit an undefined value, just make it an empty array ( for now )
+        if (typeof value === 'undefined') {
+          value = [];
         }
-        */
         // if the array has more then one element, it is most likely a syntax error in the schema definition from the user
         if (property.length > 1) {
           errors.push({
@@ -244,12 +249,7 @@ var validate = mschema.validate = function (_data, _schema, options) {
             message: 'Typed arrays can only be of one type'
           });
         }
-
-        // check if the value provided is an array
         if (!Array.isArray(value)) {
-          if (typeof value === "undefined") {
-            value = [];
-          } else {
             // if the value provided is not an array, validation fails
             errors.push({
               property: propertyName,
@@ -259,23 +259,21 @@ var validate = mschema.validate = function (_data, _schema, options) {
               value: value,
               message: 'Value is not an array'
             });
-          }
-          continue;
-        }
-        // iterate through every value in the array check and for validity
-        if (property.length === 0) {
-          continue;
+            continue;
         } else {
-          value.forEach(function(item){
-            parseConstraint(property[0], item);
-          });
+          // iterate through every value in the array check and for validity
+          if (property.length === 0) {
+            continue;
+          } else {
+            value.forEach(function(item){
+              parseConstraint(property[0], item);
+            });
+          }
         }
       }
-
       else { // if property is not of type Array
         parseConstraint(property, value);
       }
-
     }
 
   }

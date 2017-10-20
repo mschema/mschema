@@ -55,6 +55,48 @@ test("mschema.validate - invalid data - array of - string", function (t) {
   t.end();
 });
 
+test("mschema.validate - undefined array data - array of - string", function (t) {
+
+  var blog = {
+    "name": "string",
+    "posts": ["string"]
+  };
+
+  var data = {
+    "name": "My Blog",
+    "posts": undefined
+  };
+
+  var result = mschema.validate(data, blog);
+
+  t.equal(result.valid, true);
+  t.ok(result, "data is valid");
+  t.end();
+});
+
+
+test("mschema.validate - multiple array types in one array - string", function (t) {
+
+  var blog = {
+    "name": "string",
+    "posts": ["string", "string"]
+  };
+
+  var data = {
+    "name": "My Blog",
+    "posts": []
+  };
+
+  var result = mschema.validate(data, blog);
+
+  t.equal(result.valid, false);
+  t.equal(result.errors[0].message, 'Typed arrays can only be of one type');
+  t.ok(result, "schema is invalid");
+  t.end();
+});
+
+
+
 test("mschema.validate - mixed invalid and valid data - array of - string", function (t) {
 
   var blog = {

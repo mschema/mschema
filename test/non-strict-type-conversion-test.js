@@ -21,17 +21,26 @@ test("mschema.validate - { strict: false } - numbers as strings", function (t) {
       "type": "number",
       "min": 1,
       "max": 8
-    }
+    },
+    "active": "boolean",
+    "armed": "boolean",
+    "exploding": "boolean"
   };
 
   var data = {
     "name": "small missle",
     "power": "low",
-    "warheads": "5"
+    "warheads": "5",
+    "active": "on",
+    "armed": "off",
+    "exploding": undefined
   };
 
   var validate = mschema.validate(data, missle, { strict: false });
   t.equal(validate.valid, true);
+  t.equal(validate.instance.active, true);
+  t.equal(validate.instance.armed, false);
+  t.equal(validate.instance.exploding, false);
   t.equal(validate.instance.warheads, 5);
   t.end();
 

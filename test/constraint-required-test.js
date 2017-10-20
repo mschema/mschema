@@ -176,7 +176,6 @@ test("mschema.validate - required string property - empty string value", functio
   t.ok(result, "data is invalid");
   t.end();
 
-
 });
 
 
@@ -191,7 +190,7 @@ test("mschema.validate - required property, default value - null data", function
     "age": { type: 'number', required: false }
   };
 
-  var data = { name: null };
+  var data = { name: null, age: 20 };
 
   var result = mschema.validate(data, user);
   t.equal(result.valid, true);

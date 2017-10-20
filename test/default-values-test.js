@@ -20,7 +20,11 @@ test("mschema.validate - valid data - default value", function (t) {
       "type": "number",
       "default": 42
     },
-    "items": []
+    "items": [],
+    "file": {
+      "type": "file",
+      "default": "ReadMe.md"
+    }
   };
 
   var data = {};

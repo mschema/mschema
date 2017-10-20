@@ -62,7 +62,6 @@ test("mschema.validate - invalid data - nested constraints", function (t) {
 
   var result = mschema.validate(data, user);
 
-  console.log(result)
   t.equal(result.valid, false);
   t.type(result.errors, Array)
   t.type(result.errors, Object);
