@@ -390,6 +390,43 @@ var checkConstraint = mschema.checkConstraint = function (property, constraint, 
       }
     break;
 
+    case 'conform':
+      if (typeof expected !== 'function') {
+        errors.push({
+          property: property,
+          constraint: 'conform',
+          expected: 'function',
+          actual: typeof expected,
+          value: value,
+          message: 'conform property must be function'
+        });
+      } else {
+        var _value = expected(value);
+        if (_value !== true && _value !== false) {
+          errors.push({
+            property: property,
+            constraint: 'conform',
+            expected: 'boolean',
+            actual: _value,
+            value: value,
+            message: 'conform function must return true or false'
+          });
+          return;
+        }
+        if (_value !== true) {
+          errors.push({
+            property: property,
+            constraint: 'conform',
+            expected: true,
+            actual: _value,
+            value: value,
+            message: 'Value does not conform to function'
+          });
+        }
+      }
+    break;
+
+
     default:
       // console.log('missing constraint - ' + constraint);
     break;
