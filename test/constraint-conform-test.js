@@ -49,6 +49,40 @@ test("mschema.validate - valid data - constrained properties - conform", functio
 
 });
 
+test("mschema.validate - peer dependent data - constrained properties - conform", function (t) {
+
+  var user = {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "confirmPassword": {
+      "type": "string",
+      "required": true,
+      "conform": function (val, user) {
+        return val === user.password
+      }
+    }
+  };
+
+  var data = {
+    "name": "Marak",
+    "password": "alpaca-nutmeg",
+    "confirmPassword": "alpaca-nutmeg"
+  };
+
+  var result = mschema.validate(data, user);
+
+  t.equal(result.valid, true);
+  t.ok(result, "peer dependent data is valid");
+  t.end();
+
+});
+
 test("mschema.validate - invalid data - constrained properties - conform", function (t) {
 
   var user = {
