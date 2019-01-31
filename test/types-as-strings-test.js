@@ -16,7 +16,8 @@ test("mschema.validate - valid data - constrained property - type - string", fun
     "age": "number",
     "address": "object",
     "isActive": "boolean",
-    "meta": "any"
+    "meta": "any",
+    "collections": "integer"
   };
 
   var data = {
@@ -28,7 +29,8 @@ test("mschema.validate - valid data - constrained property - type - string", fun
       "zipcode": "12345-01"
     },
     "isActive": true,
-    "meta": 42
+    "meta": 42,
+    "collections": 30
   };
 
   var result = mschema.validate(data, user);
@@ -44,14 +46,16 @@ test("validate invalid data based on simple schema with properties", function (t
      "name": "string",
      "age": "number",
      "address": "object",
-     "isActive": "boolean"
+     "isActive": "boolean",
+     "collections": "integer"
    };
 
   var data = {
     "name": 100,
     "age": "abc",
     "address": "not an object",
-    "isActive": "not a boolean"
+    "isActive": "not a boolean",
+    "collections": 3.04
   };
 
   var result = mschema.validate(data, user);
@@ -59,7 +63,7 @@ test("validate invalid data based on simple schema with properties", function (t
   t.type(result.errors, Array)
   t.type(result.errors, Object);
 
-  t.equal(result.errors.length, 4);
+  t.equal(result.errors.length, 5);
 
   t.equal(result.errors[0].property, 'name');
   t.equal(result.errors[0].constraint, 'type');
@@ -84,6 +88,12 @@ test("validate invalid data based on simple schema with properties", function (t
   t.equal(result.errors[3].value, 'not a boolean');
   t.equal(result.errors[3].expected, 'boolean');
   t.equal(result.errors[3].actual, 'string');
+
+  t.equal(result.errors[4].property, 'collections');
+  t.equal(result.errors[4].constraint, 'type');
+  t.equal(result.errors[4].value, 3.04);
+  t.equal(result.errors[4].expected, 'integer');
+  t.equal(result.errors[4].actual, 'number');
 
   t.ok(result, "data is invalid");
   t.end();

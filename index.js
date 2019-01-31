@@ -48,6 +48,8 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
 
   function _parse (data, schema) {
 
+    var types = Object.keys(mschema.types)
+
     // iterate through properties and compare values to types
     for (var propertyName in schema) {
 
@@ -60,7 +62,7 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
       function parseConstraint (property, value) {
 
         // auto-types on string values ( will turn "foo": "string" into { type: "string", required: false }), etc
-        if (typeof property === "string" && (property === 'string' || property === 'number' || property === 'object' || property === 'array' || property === 'boolean' || property === 'any')) {
+        if (typeof property === "string" && (types.indexOf(property) !== -1)) {
           property = {
             "type": property,
             "required": false
@@ -97,7 +99,7 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
             data[propertyName] = value;
           }
           // determine if any incoming data might need to be changed from an html checkbox into a boolean
-          if (typeof value === "string" && (property === "boolean" || property.type === "boolean")) {
+          if (typeof value === "string" && (property.type === "boolean")) {
             if (value === "on") {
               value = true;
             }
