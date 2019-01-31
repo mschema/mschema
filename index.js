@@ -220,10 +220,10 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
                 _parse(value, property);
                 return;
               } else {
-                checkConstraint(propertyName, constraint, property[constraint], value, errors);
+                checkConstraint(propertyName, constraint, property[constraint], value, data, errors);
               }
             } else {
-              checkConstraint(propertyName, constraint, property[constraint], value, errors);
+              checkConstraint(propertyName, constraint, property[constraint], value, data, errors);
             }
           }
         }
@@ -308,7 +308,7 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
   return result;
 };
 
-var checkConstraint = mschema.checkConstraint = function (property, constraint, expected, value, errors) {
+var checkConstraint = mschema.checkConstraint = function (property, constraint, expected, value, data, errors) {
 
   switch (constraint) {
 
@@ -401,7 +401,7 @@ var checkConstraint = mschema.checkConstraint = function (property, constraint, 
           message: 'conform property must be function'
         });
       } else {
-        var _value = expected(value);
+        var _value = expected(value, data);
         if (_value !== true && _value !== false) {
           errors.push({
             property: property,
