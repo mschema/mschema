@@ -18,9 +18,14 @@ test("mschema.validate - { strict: false } - numbers as strings", function (t) {
       "enum": ["high", "medium", "low"]
     },
     "warheads": {
-      "type": "number",
+      "type": "integer",
       "min": 1,
       "max": 8
+    },
+    "fuel": {
+      "type": "number",
+      "min": 0,
+      "max": 100
     },
     "active": "boolean",
     "armed": "boolean",
@@ -31,6 +36,7 @@ test("mschema.validate - { strict: false } - numbers as strings", function (t) {
     "name": "small missle",
     "power": "low",
     "warheads": "5",
+    "fuel": "33.3",
     "active": "on",
     "armed": "off",
     "exploding": undefined
@@ -42,6 +48,7 @@ test("mschema.validate - { strict: false } - numbers as strings", function (t) {
   t.equal(validate.instance.armed, false);
   t.equal(validate.instance.exploding, false);
   t.equal(validate.instance.warheads, 5);
+  t.equal(validate.instance.fuel, 33.3);
   t.end();
 
 });

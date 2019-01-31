@@ -7,6 +7,9 @@ mschema.types = {
   "number": function (val) {
     return typeof val === "number";
   },
+  "integer": function (val) {
+    return typeof val === "number" && val % 1 === 0;
+  },
   "boolean": function (val) {
     return typeof val === "boolean";
   },
@@ -74,10 +77,16 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
         if (options.strict === false) {
           var _value;
           // determine if any incoming data might need to be changed from a string number into a Number type
-          if (typeof value === "string" && (property === "number" || property.type === "number")) {
-            _value = parseInt(data[propertyName], 10);
+          if (typeof value === "string" && property.type === "number") {
+            _value = +value;
             if (_value.toString() !== "NaN") {
-              // a non NaN number was parsed, assign it as validation value and to instance value
+              value = _value;
+              data[propertyName] = value;
+            }
+          }
+          if (typeof value === "string" && property.type === "integer") {
+            _value = parseInt(value, 10);
+            if (_value.toString() !== "NaN") {
               value = _value;
               data[propertyName] = value;
             }
