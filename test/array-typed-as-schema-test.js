@@ -39,48 +39,6 @@ test("mschema.validate - valid data - constraint - array of objects", function (
 
 });
 
-test("mschema.validate - valid data - constraint - array of objects", function (t) {
-
-  var blog = {
-    "name": "string",
-    "posts": [{
-        "title": {
-          "type": "string",
-          "minLength": 3,
-          "maxLength": 15
-        },
-        "content": {
-          "type": "string",
-          "minLength": 3,
-          "maxLength": 15
-        }
-    },{
-        "a": {
-          "type": "string",
-          "minLength": 3,
-          "maxLength": 15
-        },
-        "b": {
-          "type": "string",
-          "minLength": 3,
-          "maxLength": 15
-        }
-    }]
-  };
-
-  var data = {
-    "name": "My Blog",
-    "posts": [{ "title": "a post", "content": "some content"}]
-  };
-
-  var result = mschema.validate(data, blog);
-  t.equal(result.valid, false);
-  t.ok(result, "schema is invalid");
-  t.equal(result.errors[0].message, 'Typed arrays can only be of one type');
-  t.end();
-
-});
-
 test("mschema.validate - invalid data - constraint - array of objects", function (t) {
 
   var blog = {

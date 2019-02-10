@@ -76,3 +76,34 @@ test("mschema.validate - invalid data - nested constraints", function (t) {
   t.end();
 
 });
+
+test("mschema.validate - invalid data - array", function (t) {
+
+  var user = {
+    "name": "string",
+    "age": "number",
+    "address": "object"
+  };
+
+  var data = {
+    "name": "Marak",
+    "age": 42,
+    "address": []
+  };
+
+  var result = mschema.validate(data, user);
+
+  t.equal(result.valid, false);
+  t.type(result.errors, Array)
+  t.type(result.errors, Object);
+  t.equal(result.errors.length, 1);
+  t.equal(result.errors[0].property, "address");
+  t.equal(result.errors[0].constraint, "type");
+  t.similar(result.errors[0].expected, "object");
+  t.equal(result.errors[0].actual, "array");
+  t.equal(result.errors[0].value, data.address);
+  t.ok(result, "data is invalid");
+
+  t.end();
+
+});

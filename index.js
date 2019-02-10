@@ -14,7 +14,10 @@ mschema.types = {
     return typeof val === "boolean";
   },
   "object": function (val) {
-    return typeof val === "object";
+    return type(val) === 'object';
+  },
+  "array": function (val) {
+    return type(val) === 'array';
   },
   "any": function (val) {
     return true;
@@ -178,7 +181,7 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
               property: propertyName,
               constraint: 'type',
               expected: "object",
-              actual: typeof value,
+              actual: type(value),
               value: value,
               message: 'Invalid value for properties'
             });
@@ -187,25 +190,25 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
           return;
         }
 
-        if (typeof value === "object") {
+        if (type(value) === "object") {
           _parse(value, property);
           return;
         } else {
 
           if (nested === true) {
 
-            if (property.required === true && typeof value !== 'object') {
+            if (property.required === true && type(value) !== 'object') {
               errors.push({
                 property: propertyName,
                 constraint: 'type',
                 expected: "object",
-                actual: typeof value,
+                actual: type(value),
                 value: value,
                 message: 'Invalid value for object type'
               });
             }
 
-            if (property.required !== true && typeof value !== 'object') {
+            if (property.required !== true && type(value) !== 'object') {
 
               if (typeof value === 'undefined') {
                 value = {};
@@ -215,7 +218,7 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
                   property: propertyName,
                   constraint: 'type',
                   expected: "object",
-                  actual: typeof value,
+                  actual: type(value),
                   value: value,
                   message: 'Invalid value for object type'
                 });
@@ -241,43 +244,72 @@ var validate = mschema.validate = function (_data, _schema, options, cb) {
 
       }
 
-      // TODO: remove this check and instead create object literal to represent array type
-      // { type: 'array', required: false }
-      // if the property is an array, assume it has a single value of either string or object type
+      // if the property is an array, its contents define the array typed property
       if (Array.isArray(property) === true) {
-        // if we've hit an undefined value, just make it an empty array ( for now )
-        if (typeof value === 'undefined') {
+        property = {
+          type: 'array',
+          required: false,
+          items: property.length <= 1 ? (property[0] || 'any') : property
+        };
+      }
+
+      if (property.type === 'array') {
+        // if we've hit an undefined value, just make it an empty array
+        if (property.required !== true && typeof value === 'undefined') {
           value = [];
         }
-        // if the array has more then one element, it is most likely a syntax error in the schema definition from the user
-        if (property.length > 1) {
-          errors.push({
-            property: property,
-            constraint: 'type',
-            expected: "Single element array",
-            actual: value.length + " element array",
-            value: value.toString(),
-            message: 'Typed arrays can only be of one type'
-          });
-        }
-        if (!Array.isArray(value)) {
+       if (!Array.isArray(value)) {
             // if the value provided is not an array, validation fails
             errors.push({
               property: propertyName,
               constraint: 'type',
               expected: "array",
-              actual: typeof value,
+              actual: type(value),
               value: value,
               message: 'Value is not an array'
             });
             continue;
         } else {
-          // iterate through every value in the array check and for validity
-          if (property.length === 0) {
-            continue;
+          // each item corresponds to a member of a tuple
+          if (Array.isArray(property.items)) {
+            if (property.items.length !== value.length) {
+              errors.push({
+                property: propertyName,
+                constraint: 'length',
+                expected: property.items.length,
+                actual: value.length,
+                value: value,
+                message: 'Value length does not match'
+              });
+            }
+            property.items.forEach(function(item, index){
+              parseConstraint(item, value[index]);
+            });
           } else {
+            if (typeof property.minItems === 'number' && value.length < property.minItems) {
+              errors.push({
+                property: propertyName,
+                constraint: 'minItems',
+                expected: property.minItems,
+                actual: value.length,
+                value: value,
+                message: 'Array has too few items'
+              });
+            }
+            if (typeof property.maxItems === 'number' && value.length > property.maxItems) {
+              errors.push({
+                property: propertyName,
+                constraint: 'maxItems',
+                expected: property.maxItems,
+                actual: value.length,
+                value: value,
+                message: 'Array has too many items'
+              });
+            }
+
+            // iterate through every value in the array check and for validity
             value.forEach(function(item){
-              parseConstraint(property[0], item);
+              parseConstraint(property.items, item);
             });
           }
         }
@@ -330,7 +362,7 @@ var checkConstraint = mschema.checkConstraint = function (property, constraint, 
           constraint: 'type',
           value: value,
           expected: expected,
-          actual: typeof value,
+          actual: type(value),
           message: 'Type does not match'
         });
       }
@@ -383,7 +415,7 @@ var checkConstraint = mschema.checkConstraint = function (property, constraint, 
           expected: expected,
           actual: value,
           value: value,
-          message: 'Value execeed max of property'
+          message: 'Value exceed max of property'
         });
       }
     break;
@@ -407,7 +439,7 @@ var checkConstraint = mschema.checkConstraint = function (property, constraint, 
           property: property,
           constraint: 'conform',
           expected: 'function',
-          actual: typeof expected,
+          actual: type(expected),
           value: value,
           message: 'conform property must be function'
         });
@@ -462,6 +494,12 @@ function clone (obj, copy) {
     copy[name] = typeof copy[name] == "undefined" ? clone(obj[name], null) : copy[name];
   }
   return copy;
+}
+
+function type (val) {
+  if (val === null) return 'null';
+  if (Array.isArray(val)) return 'array';
+  return typeof val;
 }
 
 function Schema (_schema) {

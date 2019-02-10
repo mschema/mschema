@@ -77,21 +77,20 @@ test("mschema.validate - undefined array data - array of - string", function (t)
 
 test("mschema.validate - multiple array types in one array - string", function (t) {
 
-  var blog = {
+  var point = {
     "name": "string",
-    "posts": ["string", "string"]
+    "coords": ["number", "number"]
   };
 
   var data = {
-    "name": "My Blog",
-    "posts": []
+    "name": "missle base",
+    "coords": [42.544, -118.534]
   };
 
-  var result = mschema.validate(data, blog);
+  var result = mschema.validate(data, point);
 
-  t.equal(result.valid, false);
-  t.equal(result.errors[0].message, 'Typed arrays can only be of one type');
-  t.ok(result, "schema is invalid");
+  t.equal(result.valid, true);
+  t.ok(result, "data is valid");
   t.end();
 });
 
@@ -115,7 +114,7 @@ test("mschema.validate - mixed invalid and valid data - array of - string", func
   t.type(result.errors, Array)
   t.type(result.errors, Object);
   t.equal(result.errors.length, 1);
-  
+
   t.equal(result.errors[0].property, 'posts');
   t.equal(result.errors[0].constraint, 'type');
   t.equal(result.errors[0].value, 2);
